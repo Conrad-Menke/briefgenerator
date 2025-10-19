@@ -710,7 +710,7 @@ def erstelle_brief_pdf(daten):
     
     absender_auswahl = daten['absender'].get('auswahl', 's')
     
-    # PERSÖNLICHE DATEN - Unterschriftsdateien anpassen:
+    # PERSÖNLICHE DATEN - Unterschriftsdateien anpassen. Vielleicht Pfade ändern:
     if absender_auswahl == 'b':
         unterschrift_sophia = STATIC_DIR / "Unterschrift_Sophia.png"
         unterschrift_conrad = STATIC_DIR / "Unterschrift_Conrad.png"
