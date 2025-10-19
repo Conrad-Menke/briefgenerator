@@ -757,7 +757,7 @@ def erstelle_brief_pdf(daten):
         if absender_auswahl == 's':
             unterschrift_datei = STATIC_DIR / config.DATEI_UNTERSCHRIFT_1
         elif absender_auswahl == 'c':
-            unterschrift_datei = STATIC_DIR / config.DATEI_UNTERSCHRIFT_2xs
+            unterschrift_datei = STATIC_DIR / config.DATEI_UNTERSCHRIFT_2
         
         if unterschrift_datei and unterschrift_datei.exists():
             try:
@@ -882,4 +882,4 @@ if __name__ == '__main__':
     print("   http://localhost:8888")
     print("\n⏹️  Zum Beenden: Strg+C drücken\n")
     
-    app.run(host='0.0.0.0', port=4888)
+    app.run(host='0.0.0.0', port=8888)
