@@ -21,18 +21,18 @@ from datetime import date
 import os
 import io
 import base64
+import config
 from pathlib import Path
 
 app = Flask(__name__)
 
 BASE_DIR = Path(__file__).parent
-STATIC_DIR = BASE_DIR / "static"
-WAPPEN_FARBE = STATIC_DIR / "wappen.png"
-WAPPEN_SW = STATIC_DIR / "wappensw.png"
+STATIC_DIR = BASE_DIR / config.ORDNER_STATIC
+WAPPEN_FARBE = STATIC_DIR / config.DATEI_WAPPEN_FARBE
+WAPPEN_SW = STATIC_DIR / config.DATEI_WAPPEN_SW
 
-# PERSÖNLICHE DATEN - Hier anpassen:
-ABSENDER_STRASSE = "Sebastianstraße 43c"
-ABSENDER_PLZ_ORT = "53115 Bonn"
+ABSENDER_STRASSE = config.STRASSE
+ABSENDER_PLZ_ORT = f"{config.PLZ} {config.ORT}"
 
 STATIC_DIR.mkdir(exist_ok=True)
 
@@ -390,7 +390,7 @@ HTML_TEMPLATE = """
                 {% endif %}
             </div>
             <h1>Brief-Generator</h1>
-            <p class="subtitle">Familie Menke</p>
+            <p class="subtitle">Familie {{familienname}}</p>
             <div class="decorative-line"></div>
         </div>
         
@@ -430,12 +430,12 @@ HTML_TEMPLATE = """
                 <label>Wer schreibt den Brief?</label>
                 <div class="radio-group">
                     <div class="radio-option">
-                        <input type="radio" id="sophia" name="absender" value="s" checked>
-                        <label for="sophia">Sophia Klings</label>
+                        <input type="radio" id="{{vorname_1}}" name="absender" value="s" checked>
+                        <label for="{{vorname_1}}">{{vorname_1}} {{nachname_1}}</label>
                     </div>
                     <div class="radio-option">
-                        <input type="radio" id="conrad" name="absender" value="c">
-                        <label for="conrad">Conrad Menke</label>
+                        <input type="radio" id="{{vorname_2}}" name="absender" value="c">
+                        <label for="{{vorname_2}}">{{vorname_2}} {{nachname_2}}</label>
                     </div>
                     <div class="radio-option">
                         <input type="radio" id="beide" name="absender" value="b">
@@ -561,7 +561,7 @@ def erstelle_brief_pdf(daten):
             
             # PERSÖNLICHE DATEN - Familienname ändern:
             c.setFont("Helvetica-Bold", 11)
-            familie_text = "Familie Menke"
+            familie_text = "Familie " + config.FAMILIENNAME
             text_breite_familie = c.stringWidth(familie_text, "Helvetica-Bold", 11)
             c.drawString(rechte_linie_ende - text_breite_familie, linie_y + 0.3*cm, familie_text)
         
@@ -591,7 +591,7 @@ def erstelle_brief_pdf(daten):
             # PERSÖNLICHE DATEN - Ort im Datum ändern:
             datum_y = hoehe - 9*cm
             heute = date.today().strftime("%d.%m.%Y")
-            datum_text = f"Bonn, {heute}"
+            datum_text = config.ORT + ", den " + heute
             datum_breite = c.stringWidth(datum_text, "Helvetica", 11)
             c.drawString(breite - 2.5*cm - datum_breite, datum_y, datum_text)
             
@@ -712,8 +712,8 @@ def erstelle_brief_pdf(daten):
     
     # PERSÖNLICHE DATEN - Unterschriftsdateien anpassen. Vielleicht Pfade ändern:
     if absender_auswahl == 'b':
-        unterschrift_sophia = STATIC_DIR / "Unterschrift_Sophia.png"
-        unterschrift_conrad = STATIC_DIR / "Unterschrift_Conrad.png"
+        unterschrift_sophia = STATIC_DIR / config.DATEI_UNTERSCHRIFT_1
+        unterschrift_conrad = STATIC_DIR / config.DATEI_UNTERSCHRIFT_2
         
         unterschrift_hoehe = 2.5*cm
         unterschrift_breite = 5*cm
@@ -749,15 +749,15 @@ def erstelle_brief_pdf(daten):
                 pass
         
         y_pos -= 0.5*cm
-        c.drawString(left_margin, y_pos, "Sophia Klings")
-        c.drawString(rechte_position, y_pos, "Conrad Menke")
+        c.drawString(left_margin, y_pos, config.ABSENDER_VORNAME_1 + " " + config.ABSENDER_NACHNAME_1)
+        c.drawString(rechte_position, y_pos, config.ABSENDER_VORNAME_2 + " " + config.ABSENDER_NACHNAME_2)
     
     else:
         unterschrift_datei = None
         if absender_auswahl == 's':
-            unterschrift_datei = STATIC_DIR / "Unterschrift_Sophia.png"
+            unterschrift_datei = STATIC_DIR / config.DATEI_UNTERSCHRIFT_1
         elif absender_auswahl == 'c':
-            unterschrift_datei = STATIC_DIR / "Unterschrift_Conrad.png"
+            unterschrift_datei = STATIC_DIR / config.DATEI_UNTERSCHRIFT_2xs
         
         if unterschrift_datei and unterschrift_datei.exists():
             try:
@@ -794,7 +794,12 @@ def index():
         HTML_TEMPLATE,
         wappen_base64=wappen_farbe_b64,
         wappen_farbe_base64=wappen_farbe_b64,
-        wappen_sw_base64=wappen_sw_b64
+        wappen_sw_base64=wappen_sw_b64,
+        familienname=config.FAMILIENNAME,
+        vorname_1=config.ABSENDER_VORNAME_1,
+        vorname_2=config.ABSENDER_VORNAME_2,
+        nachname_1=config.ABSENDER_NACHNAME_1,
+        nachname_2=config.ABSENDER_NACHNAME_2
     )
 
 @app.route('/generate', methods=['POST'])
@@ -810,11 +815,11 @@ def generate():
     # PERSÖNLICHE DATEN - Namen der Absender anpassen:
     absender_auswahl = request.form.get('absender')
     if absender_auswahl == 's':
-        absender_name = "Sophia Klings"
+        absender_name = config.ABSENDER_VORNAME_1 + " " + config.ABSENDER_NACHNAME_1
     elif absender_auswahl == 'c':
-        absender_name = "Conrad Menke"
+        absender_name = config.ABSENDER_VORNAME_2 + " " + config.ABSENDER_NACHNAME_2
     else:
-        absender_name = "Sophia Klings und Conrad Menke"
+        absender_name = f"{config.ABSENDER_VORNAME_1} {config.ABSENDER_NACHNAME_1} und {config.ABSENDER_VORNAME_2} {config.ABSENDER_NACHNAME_2}"
     
     anrede_manuell = request.form.get('anrede', '').strip()
     
@@ -871,10 +876,10 @@ def generate():
 
 if __name__ == '__main__':
     print("\n" + "="*60)
-    print("✨ Brief-Generator - Familie Menke")
+    print("✨ Brief-Generator - Familie" + " " + config.FAMILIENNAME)
     print("="*60)
     print("\n📍 Öffne in deinem Browser:")
     print("   http://localhost:8888")
     print("\n⏹️  Zum Beenden: Strg+C drücken\n")
     
-    app.run(host='0.0.0.0', port=8888)
+    app.run(host='0.0.0.0', port=4888)
