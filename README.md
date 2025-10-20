@@ -6,7 +6,7 @@ Eine elegante Flask-Webanwendung zum Erstellen professioneller Briefe als PDF mi
 
 - 🎨 Moderne, responsive Web-Oberfläche
 - 📄 Automatische PDF-Generierung mit korrekter Formatierung
-- 🖼️ Unterstützung für Familienwappen (farbig/schwarz-weiß)
+- 🖼️ Unterstützung für Firmenlogos oder Familienwappen (farbig/schwarz-weiß)
 - ✍️ Digitale Unterschriften
 - 📝 Mehrseitige Briefe mit automatischem Seitenumbruch
 - 🎯 Bullet-Points und Absätze werden korrekt formatiert
@@ -21,7 +21,7 @@ Eine elegante Flask-Webanwendung zum Erstellen professioneller Briefe als PDF mi
 ### Schritt 1: Repository klonen
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Conrad-Menke/briefgenerator/
 cd brief-generator
 ```
 
@@ -48,8 +48,8 @@ pip install flask reportlab pillow
 ### Schritt 4: Static-Ordner vorbereiten
 
 Erstelle den `static/` Ordner und füge folgende Dateien hinzu:
-- `wappen.png` - Farbiges Wappen
-- `wappensw.png` - Schwarz-Weiß Wappen
+- `logo.png` - Farbiges Logo
+- `logosw.png` - Schwarz-Weiß Logo
 - `Unterschrift_<Name1>.png` - Unterschrift Person 1
 - `Unterschrift_<Name2>.png` - Unterschrift Person 2
 
@@ -70,7 +70,7 @@ http://localhost:8888
 
 ### Brief erstellen
 
-1. **Logo auswählen**: Wähle zwischen farbigem Wappen, Schwarz-Weiß oder keinem Wappen
+1. **Logo auswählen**: Wähle zwischen farbigem Logo, Schwarz-Weiß oder keinem Logo
 2. **Absender**: Wähle wer den Brief schreibt (Person 1, Person 2 oder beide)
 3. **Empfänger**: Trage die Empfängerdaten ein
 4. **Briefinhalt**: Fülle Betreff, Anrede, Text und Grußformel aus
@@ -92,8 +92,8 @@ brief-generator/
 ├── .gitignore            # Git-Ausschlüsse
 ├── README.md             # Diese Datei
 └── static/               # Persönliche Dateien (nicht in Git!)
-    ├── wappen.png
-    ├── wappensw.png
+    ├── logo.png
+    ├── logosw.png
     ├── Unterschrift_<Name1>.png
     └── Unterschrift_<Name2>.png
 ```
@@ -101,8 +101,8 @@ brief-generator/
 ## 🔒 Sicherheitshinweise
 
 - Die Datei `config.py` enthält persönliche Daten und wird **nicht** ins Git-Repository übertragen
-- Der `static/` Ordner mit Wappen und Unterschriften ist ebenfalls geschützt
-- Teile niemals deine `config.py` oder Dateien aus `static/`
+- Der `static/` Ordner mit Logos und Unterschriften ist ebenfalls geschützt
+- Denn in `config.py` und auch `static/` stehen deine persönliche Anschrift und deine privaten Logos/Wappen...
 
 ## 🛠️ Anpassungen
 
@@ -136,7 +136,5 @@ app.run(host='0.0.0.0', port=8888)  # Ändere 8888 zu deinem Wunsch-Port
 ## 📝 Lizenz
 
 Privates Projekt - Alle Rechte vorbehalten
-
----
 
 **Hinweis:** Diese Anwendung ist für den privaten Gebrauch konzipiert.
